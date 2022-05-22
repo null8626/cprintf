@@ -9,7 +9,8 @@
 #endif
 
 static HANDLE con = NULL;
-static WORD def_attr = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+static WORD def_attr = 0;
+static WORD inverse_def_attr;
 
 #else
 #include <string.h>
@@ -19,6 +20,38 @@ static WORD def_attr = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
 #include <stdio.h>
 
 #ifdef _WIN32
+static WORD possible_colors[] = {
+  FOREGROUND_RED,
+  FOREGROUND_GREEN,
+  FOREGROUND_BLUE,
+  BACKGROUND_RED,
+  BACKGROUND_GREEN,
+  BACKGROUND_BLUE
+};
+
+static WORD retained_formats[] = {
+  FOREGROUND_INTENSITY, BACKGROUND_INTENSITY, COMMON_LVB_UNDERSCORE
+};
+
+static WORD get_inverse_color(const WORD col) {
+  WORD res = 0;
+  unsigned char i;
+  
+  for (i = 0; i < 6; i++) {
+    if ((col & possible_colors[i]) == 0) {
+      res |= possible_colors[i];
+    }
+  }
+  
+  for (i = 0; i < 3; i++) {
+    if (col & retained_formats[i]) {
+      res |= retained_formats[i];
+    }
+  }
+  
+  return res;
+}
+
 static unsigned char cprintf_init(void) {
   if (con != NULL)
     return 1;
@@ -32,21 +65,25 @@ static unsigned char cprintf_init(void) {
   if (GetConsoleScreenBufferInfo(con, &info) == 0)
     return 0;
 
-  def_attr = info.wAttributes;
+  inverse_def_attr = get_inverse_color(def_attr = info.wAttributes);
   return 1;
 }
 
-static const WORD colors[7][3] = {
-  { 114, FOREGROUND_RED,           BACKGROUND_RED },
-  { 103, FOREGROUND_GREEN,           BACKGROUND_GREEN },
-  { 121, FOREGROUND_RED | FOREGROUND_GREEN,  BACKGROUND_RED | BACKGROUND_GREEN },
-  { 98,  FOREGROUND_BLUE,          BACKGROUND_BLUE },
-  { 109, FOREGROUND_RED | FOREGROUND_BLUE,   BACKGROUND_RED | BACKGROUND_BLUE },
+typedef struct {
+  unsigned char char_code;
+  WORD foreground;
+  WORD background;
+} colors_t;
+
+static const colors_t colors[] = {
+  { 114, FOREGROUND_RED, BACKGROUND_RED },
+  { 103, FOREGROUND_GREEN, BACKGROUND_GREEN },
+  { 121, FOREGROUND_RED | FOREGROUND_GREEN, BACKGROUND_RED | BACKGROUND_GREEN },
+  { 98,  FOREGROUND_BLUE, BACKGROUND_BLUE },
+  { 109, FOREGROUND_RED | FOREGROUND_BLUE, BACKGROUND_RED | BACKGROUND_BLUE },
   { 99,  FOREGROUND_GREEN | FOREGROUND_BLUE, BACKGROUND_GREEN | BACKGROUND_BLUE },
-  
-  { 119,
-    FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE,
-    BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE }
+  { 119, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE, 
+         BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE }
 };
 #endif
 
@@ -82,7 +119,7 @@ static void cprintf_ansi_parse(const char * str, ansi_context_t * out) {
       if (ansi_order[i] == tolower(str[1])) {
         strcpy(out->ansi + out->ansi_len, "\x1b[");
         strcpy(out->ansi + out->ansi_len + 4, "m");
-        out->ansi[out->ansi_len + 2] = l == 'f' ? '3' : '4';
+        out->ansi[out->ansi_len + 2] = '3' + (l == 'f');
         out->ansi[out->ansi_len + 3] = '0' + i;
         out->ansi_len += 5;
         
@@ -120,8 +157,12 @@ static void cprintf_parse(const char * str, context_t * out) {
     unsigned char i = 0;
 
     while (i < 7) {
-      if (colors[i][0] == tolower(str[1])) {
-        out->attr |= colors[i][l == 'f' ? 1 : 2];
+      if (colors[i].char_code == tolower(str[1])) {
+        if (l == 'f') {
+          out->attr |= colors[i].foreground;
+        } else {
+          out->attr |= colors[i].background;
+        }
         
         if (l != str[0])
           out->attr |= l == 'b' ? BACKGROUND_INTENSITY : FOREGROUND_INTENSITY;
@@ -132,7 +173,7 @@ static void cprintf_parse(const char * str, context_t * out) {
       i++;
     }
   } else if (l == 'i') {
-    out->attr = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE;
+    out->attr = inverse_def_attr;
   }
   
   if (l == 'u') {

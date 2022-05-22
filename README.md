@@ -61,7 +61,7 @@ nmake /nologo /f VisualStudioMakefile CC=clang
 | `%bm`       | Changes the background color to magenta. | -                                                                                  |
 | `%bc`       | Changes the background color to cyan.    | -                                                                                  |
 | `%bw`       | Changes the background color to white.   | -                                                                                  |
-| `%i`        | Inverts the background and text color.   | In windows, this is an alias for `%bw`.                                            |
+| `%i`        | Inverts the background and text color.   | -                                          |
 | `%u`        | Adds an underline.                       | In windows, if no color is provided (e.g: only `%u`), no visible text will appear. |
 
 # Bold
