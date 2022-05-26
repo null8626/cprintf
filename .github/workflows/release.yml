@@ -25,7 +25,6 @@ jobs:
         with:
           name: libcprintf-windows-msvc
           path: |
-            *.exe
             *.lib
             *.dll
   build-mingw:
@@ -47,7 +46,6 @@ jobs:
           path: |
             *.a
             *.so
-            *.exe
   build-macos:
     name: Build for macOS 
     runs-on: macos-latest
