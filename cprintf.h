@@ -14,7 +14,14 @@
 #define CPRINTF_EXPORT
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 CPRINTF_EXPORT size_t cprintf_ansi(char * str, const size_t size, const char * fmt, ...);
 CPRINTF_EXPORT void cprintf(const char * fmt, ...);
 
+#ifdef __cplusplus
+}
+#endif
 #endif
