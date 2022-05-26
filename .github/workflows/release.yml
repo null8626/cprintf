@@ -1,0 +1,145 @@
+name: Release
+env:
+  MACOSX_DEPLOYMENT_TARGET: '10.14'
+on:
+  release:
+    types: [published]
+jobs:
+  build-msvc:
+    name: Build for MSVC
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - name: Compile (static library)
+        run: |
+           nmake /nologo /f VSMakefile
+      - name: Compile (shared library)
+        run: |
+          del *.obj
+          nmake /nologo /f VSMakefile SHARED=yes
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: libcprintf-windows-msvc
+          path: |
+            *.exe
+            *.lib
+            *.dll
+  build-mingw:
+    name: Build for MinGW
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Compile (shared library)
+        run: |
+          make WIN=yes SHARED=yes
+      - name: Compile (static library)
+        run: |
+          del *.o
+          make WIN=yes
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: libcprintf-windows-mingw
+          path: |
+            *.a
+            *.so
+            *.exe
+  build-macos:
+    name: Build for macOS 
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Compile (shared library)
+        run: |
+          make -f Macfile SHARED=yes
+      - name: Compile (static library)
+        run: |
+          rm *.o
+          make -f Macfile
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: libcprintf-macos
+          path: |
+            *.a
+            *.dylib
+  build-linux:
+    name: Build for Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Compile (shared library)
+        run: |
+          make SHARED=yes
+      - name: Compile (static library)
+        run: |
+          rm *.o
+          make
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: libcprintf-linux
+          path: |
+            *.a
+            *.so
+  publish:
+    needs:
+      - build-mingw
+      - build-msvc
+      - build-macos
+      - build-linux
+    name: Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download all artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Zipping all artifacts
+        run: |
+          cd artifacts
+          for i in */; do zip -0 -r "${i%/}.zip" "$i" & done; wait
+          mv *.zip ..
+      - name: Upload Windows MSVC artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./libcprintf-windows-msvc.zip
+          asset_name: libcprintf-windows-msvc.zip
+          asset_content_type: application/zip
+      - name: Upload Windows MinGW artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./libcprintf-windows-mingw.zip
+          asset_name: libcprintf-windows-mingw.zip
+          asset_content_type: application/zip
+      - name: Upload macOS artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./libcprintf-macos.zip
+          asset_name: libcprintf-macos.zip
+          asset_content_type: application/zip
+      - name: Upload Linux artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./libcprintf-linux.zip
+          asset_name: libcprintf-linux.zip
+          asset_content_type: application/zip

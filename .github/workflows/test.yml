@@ -1,0 +1,68 @@
+name: Test
+env:
+  MACOSX_DEPLOYMENT_TARGET: '10.14'
+'on':
+  push:
+    branches:
+      - main
+    tags-ignore:
+      - '**'
+    paths-ignore:
+      - '**/*.md'
+      - LICENSE
+      - '**/*.gitignore'
+      - '**/*.gitattributes'
+      - '.github/**'
+  pull_request: null
+jobs:
+  build-msvc:
+    name: Build for MSVC
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - name: Compile (static library)
+        run: |
+           nmake /nologo /f VSMakefile
+      - name: Compile (shared library)
+        run: |
+          del *.obj
+          nmake /nologo /f VSMakefile SHARED=yes
+  build-mingw:
+    name: Build for MinGW
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Compile (static library)
+        run: |
+          make WIN=yes
+      - name: Compile (shared library)
+        run: |
+          del *.o
+          make WIN=yes SHARED=yes
+  build-macos:
+    name: Build for MacOS 
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Compile (static library)
+        run: |
+          make -f Macfile
+      - name: Compile (shared library)
+        run: |
+          rm *.o
+          make -f Macfile SHARED=yes
+  build-linux:
+    name: Build for Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Compile (static library)
+        run: |
+          make
+      - name: Compile (shared library)
+        run: |
+          rm *.o
+          make SHARED=yes

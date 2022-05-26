@@ -1,31 +1,28 @@
 CC=gcc
-WIN=no
-
-ifeq ($(WIN),yes)
-DEL=del
-else
-DEL=rm
-endif
-
-LFLAGS=rcs
-
-ifeq ($(CC),gcc)
 AR=ar
-CFLAGS=-O3 -Wall -ansi
-else ifeq ($(CC),clang)
+
+EXTRA_CFLAGS=
+CFLAGS=-O3 -Wall -m64 -fPIC -I include
+
+ifeq ($(CC),clang)
 AR=llvm-ar
-CFLAGS=-Ofast -Wall
 endif
 
+ifeq ($(SHARED),yes)
+LIB=libcprintf.so
+_EXTRA_LIB_CFLAGS=$(LIB) -Wl,-rpath=.
+else
 LIB=libcprintf.a
+_EXTRA_LIB_CFLAGS=-L. -lcprintf
+endif
 
-.PHONY: clean
+.PHONY: $(LIB)
 
-clean: $(LIB) cprintf.o
-	$(DEL) cprintf.o
+libcprintf.so: cprintf.o
+	$(CC) -shared -o $@ $^
 
-$(LIB): cprintf.o
-	$(AR) $(LFLAGS) $(LIB) cprintf.o
+libcprintf.a: cprintf.o
+	$(AR) rcs -o $@ $^
 
-cprintf.o: cprintf.c cprintf.h
-	$(CC) $(CFLAGS) -c cprintf.c -o cprintf.o
+cprintf.o: cprintf.c
+	$(CC) $(CFLAGS) -c $< -o $@

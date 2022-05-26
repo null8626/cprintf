@@ -1,0 +1,29 @@
+CC=gcc
+
+EXTRA_CFLAGS=
+CFLAGS=-O3 -Wall -m64 -I include
+
+ifeq ($(CC),clang)
+AR=llvm-ar
+AR_FLAG=rcs
+else
+AR=libtool
+AR_FLAG=-static
+endif
+
+ifeq ($(SHARED),yes)
+LIB=libcprintf.dylib
+else
+LIB=libcprintf.a
+endif
+
+.PHONY: $(LIB)
+
+libcprintf.dylib: cprintf.o
+	$(CC) -dynamiclib -undefined suppress -flat_namespace $^ -o libcprintf.dylib
+
+libcprintf.a: cprintf.o
+	$(AR) $(AR_FLAG) -o $@ $^
+
+cprintf.o: cprintf.c
+	$(CC) $(CFLAGS) -c $< -o $@

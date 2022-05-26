@@ -1,5 +1,6 @@
 # cprintf
-Portable C Library for printing colored text on the terminal with the C formatting style. Usage:
+
+Portable C Library for printing colored text on the terminal with the C formatting style.
 ```c
 cprintf("Hello, %fg world!\n", "green text!!!");
 ```
@@ -16,30 +17,6 @@ if (cprintf_ansi(result, 100, "Hello, %fg", "world!") == 0) {
        not necessary if you don't use
        combined format specifiers. */
 }
-```
-
-# Build
-- POSIX (GCC)
-```console
-make
-```
-- POSIX (Clang)
-```console
-make CC=clang
-```
-- Windows (MinGW/GCC)
-```console
-make WIN=yes
-```
-- Windows (MSVC)
-```console
-nmake /nologo /f VisualStudioMakefile
-```
-- Windows (Clang)
-
-> This one must be the clang bundled with Visual Studio.
-```console
-nmake /nologo /f VisualStudioMakefile CC=clang
 ```
 
 # Table of formats
@@ -75,3 +52,43 @@ You can combine multiple formats too, with `%{...}`. Example:
 
 Invalid format specifier(s) will cause undefined behaviour.
 Repeated combinations, or more than 3 combinations will cause undefined behaviour in POSIX builds.
+
+
+# Download
+
+Prebuilt (64-bit) binaries are available.
+
+- [Windows (MSVC)](https://github.com/vierofernando/cprintf/releases/download/v1.0.0/libcprintf-windows-msvc.zip)
+- [Windows (MinGW)](https://github.com/vierofernando/cprintf/releases/download/v1.0.0/libcprintf-windows-mingw.zip)
+- [macOS](https://github.com/vierofernando/cprintf/releases/download/v1.0.0/libcprintf-macos.zip)
+- [Linux](https://github.com/vierofernando/cprintf/releases/download/v1.0.0/libcprintf-linux.zip)
+
+# Building locally
+
+- Linux
+```
+make [...]
+```
+- macOS
+```
+make -f Macfile [...]
+```
+- Windows (GCC)
+```
+make WIN=yes [...]
+```
+- Windows (MSVC)
+```
+nmake /nologo /f VSMakefile [...]
+```
+- Windows (Clang)
+```
+nmake /nologo /f VSClangMakefile [...]
+```
+
+#### Additional optional arguments
+
+| Format name | Description | Possible values |
+|----|----|----|
+| `CC` | The compiler used. `VSMakefile` and `VSClangMakefile` ignores this. | `gcc` (default), `clang` |
+| `SHARED` | Whether to produce a shared/dynamic library. | `no` (default), `yes` |

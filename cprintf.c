@@ -1,12 +1,7 @@
 #include "cprintf.h"
 
 #ifdef _WIN32
-#ifdef _MSC_VER
 #include <windows.h>
-#else
-#include <winbase.h>
-#include <wincon.h>
-#endif
 
 static HANDLE con = NULL;
 static WORD def_attr = 0;
@@ -186,7 +181,7 @@ static void cprintf_parse(const char * str, context_t * out) {
 #define STATUS_ESCAPE  1
 #define STATUS_FMT     2
 
-size_t cprintf_ansi(char * str, const size_t size, const char * fmt, ...) {
+CPRINTF_EXPORT size_t cprintf_ansi(char * str, const size_t size, const char * fmt, ...) {
   ansi_context_t ctx;
 
   va_list vl;
@@ -273,7 +268,7 @@ size_t cprintf_ansi(char * str, const size_t size, const char * fmt, ...) {
   return copied;
 }
 
-void cprintf(const char * fmt, ...) {
+CPRINTF_EXPORT void cprintf(const char * fmt, ...) {
 #ifdef _WIN32
   if (cprintf_init() == 0)
     return;

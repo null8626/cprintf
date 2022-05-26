@@ -1,0 +1,23 @@
+EXTRA_CFLAGS=
+EXTRA_LFLAGS=
+
+CFLAGS=/O2 /MD /I include /DCPRINTF_BUILDING /D_CRT_SECURE_NO_WARNINGS $(EXTRA_CFLAGS)
+LFLAGS=/MACHINE:x64 $(EXTRA_LFLAGS)
+
+!if "$(SHARED)" == "yes"
+LIB_FILES=cprintf.lib cprintf.dll
+!else
+LIB_FILES=cprintf_s.lib
+!endif
+
+all: $(LIB_FILES)
+
+cprintf.lib cprintf.dll:
+	llvm-rc.exe /n /fo cprintf_dll.res cprintf.rc
+	clang-cl.exe /LD /DCPRINTF_DLL $(CFLAGS) /Fe"cprintf.dll" cprintf.c cprintf_dll.res
+
+cprintf_s.lib: cprintf.obj
+	llvm-lib.exe $(LFLAGS) /OUT:cprintf_s.lib $?
+
+cprintf.obj: cprintf.c
+	clang-cl.exe $(CFLAGS) /c %s

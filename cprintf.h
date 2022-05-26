@@ -4,7 +4,17 @@
 #include <stdarg.h>
 #include <stddef.h>
 
-size_t cprintf_ansi(char * str, const size_t size, const char * fmt, ...);
-void cprintf(const char * fmt, ...);
+#ifdef CPRINTF_DLL
+#ifdef CPRINTF_BUILDING
+#define CPRINTF_EXPORT __declspec(dllexport)
+#else
+#define CPRINTF_EXPORT __declspec(dllimport)
+#endif
+#else
+#define CPRINTF_EXPORT
+#endif
+
+CPRINTF_EXPORT size_t cprintf_ansi(char * str, const size_t size, const char * fmt, ...);
+CPRINTF_EXPORT void cprintf(const char * fmt, ...);
 
 #endif
