@@ -4,7 +4,7 @@
 
 #define CPRINTF_VERSION "v1.0"
 #define CPRINTF_VERSION_RAW 1, 0, 0, 0
-#define CPRINTF_AUTHOR "null (https://github.com/vierofernando)"
+#define CPRINTF_AUTHOR "null (https://github.com/null8626)"
 #define CPRINTF_INTERNAL_NAME "cprintf"
 #define CPRINTF_LEGAL_COPYRIGHT "Licensed under the MIT license."
 #define CPRINTF_NAME "cprintf"

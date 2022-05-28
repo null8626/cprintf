@@ -58,10 +58,10 @@ Repeated combinations, or more than 3 combinations will cause undefined behaviou
 
 Prebuilt (64-bit) binaries are available.
 
-- [Windows (MSVC)](https://github.com/vierofernando/cprintf/releases/download/v1.0.0/libcprintf-windows-msvc.zip)
-- [Windows (MinGW)](https://github.com/vierofernando/cprintf/releases/download/v1.0.0/libcprintf-windows-mingw.zip)
-- [macOS](https://github.com/vierofernando/cprintf/releases/download/v1.0.0/libcprintf-macos.zip)
-- [Linux](https://github.com/vierofernando/cprintf/releases/download/v1.0.0/libcprintf-linux.zip)
+- [Windows (MSVC)](https://github.com/null8626/cprintf/releases/download/v1.0.0/libcprintf-windows-msvc.zip)
+- [Windows (MinGW)](https://github.com/null8626/cprintf/releases/download/v1.0.0/libcprintf-windows-mingw.zip)
+- [macOS](https://github.com/null8626/cprintf/releases/download/v1.0.0/libcprintf-macos.zip)
+- [Linux](https://github.com/null8626/cprintf/releases/download/v1.0.0/libcprintf-linux.zip)
 
 # Building locally
 
