@@ -1,0 +1,26 @@
+cmake_minimum_required(VERSION 2.8.12)
+
+set(CPRINTF_SRC cprintf.c)
+set(CPRINTF_NAME cprintf)
+set(CPRINTF_VERSION 1.0.1)
+
+project(${CPRINTF_NAME})
+
+add_library(${CPRINTF_NAME}   SHARED ${CPRINTF_SRC})
+add_library(${CPRINTF_NAME}_s STATIC ${CPRINTF_SRC})
+
+add_compile_definitions(CPRINTF_BUILDING)
+add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL MSVC)
+set_property(TARGET ${CPRINTF_NAME} PROPERTY COMPILE_DEFINITIONS CPRINTF_DLL)
+endif()
+
+set_property(TARGET ${CPRINTF_NAME}   PROPERTY OUTPUT_NAME ${CPRINTF_NAME})
+set_property(TARGET ${CPRINTF_NAME}_s PROPERTY OUTPUT_NAME ${CPRINTF_NAME}_s)
+
+set_target_properties(${CPRINTF_NAME} PROPERTIES
+  VERSION               ${CPRINTF_VERSION}
+  SOVERSION             1
+  MSVC_RUNTIME_LIBRARY  MultiThreadedDLL
+)

@@ -53,7 +53,6 @@ You can combine multiple formats too, with `%{...}`. Example:
 Invalid format specifier(s) will cause undefined behaviour.
 Repeated combinations, or more than 3 combinations will cause undefined behaviour in POSIX builds.
 
-
 # Download
 
 Prebuilt (64-bit) binaries are available.
@@ -63,38 +62,19 @@ Prebuilt (64-bit) binaries are available.
 - [macOS](https://github.com/null8626/cprintf/releases/download/v1.0.0/libcprintf-macos.zip)
 - [Linux](https://github.com/null8626/cprintf/releases/download/v1.0.0/libcprintf-linux.zip)
 
-# Building locally
+# Building with CMake
 
-- Meson + Ninja
-```
-meson build
-ninja -C build
-```
+To create the build files:
 
-- Linux
-```
-make [...]
-```
-- macOS
-```
-make -f Macfile [...]
-```
-- Windows (GCC)
-```
-make WIN=yes [...]
-```
-- Windows (MSVC)
-```
-nmake /nologo /f VSMakefile [...]
-```
-- Windows (Clang)
-```
-nmake /nologo /f VSClangMakefile [...]
+```console
+cmake -B build .
+cmake build
 ```
 
-#### Additional optional arguments
+And then:
 
-| Format name | Description | Possible values |
-|----|----|----|
-| `CC` | The compiler used. `VSMakefile` and `VSClangMakefile` ignores this. | `gcc` (default), `clang` |
-| `SHARED` | Whether to produce a shared/dynamic library. | `no` (default), `yes` |
+- For MSVC:
+
+```console
+msbuild build/cprintf.sln -noLogo -noConLog -p:Configuration=Release
+```
