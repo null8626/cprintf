@@ -19,7 +19,7 @@ endif()
 set_property(TARGET ${CPRINTF_NAME}   PROPERTY OUTPUT_NAME ${CPRINTF_NAME})
 set_property(TARGET ${CPRINTF_NAME}_s PROPERTY OUTPUT_NAME ${CPRINTF_NAME}_s)
 
-set_target_properties(${CPRINTF_NAME} PROPERTIES
+set_target_properties(${CPRINTF_NAME} ${CPRINTF_NAME}_s PROPERTIES
   VERSION               ${CPRINTF_VERSION}
   SOVERSION             1
   MSVC_RUNTIME_LIBRARY  MultiThreadedDLL
