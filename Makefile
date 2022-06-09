@@ -2,7 +2,7 @@ CC=gcc
 AR=ar
 
 EXTRA_CFLAGS=
-CFLAGS=-O3 -Wall -m64 -fPIC -I include
+CFLAGS=-O3 -DCPRINTF_BUILDING -Wall -fPIC $(EXTRA_CFLAGS)
 
 ifeq ($(CC),clang)
 AR=llvm-ar

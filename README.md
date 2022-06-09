@@ -65,6 +65,12 @@ Prebuilt (64-bit) binaries are available.
 
 # Building locally
 
+- Meson + Ninja
+```
+meson build
+ninja -C build
+```
+
 - Linux
 ```
 make [...]
