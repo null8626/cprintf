@@ -19,17 +19,14 @@ if (cprintf_ansi(result, 100, "Hello, %fg", "world!") == 0) {
 }
 ```
 
-Want to manually set the colors (just like every other console color library)? Do this!
+You can also use macros evaluated at compile time!
 
 ```c
 // using `cprintf_scope` here ensures that cprintf is initiated.
 cprintf_scope {
-  // use `cprintf_out` for `char *`s,
-  // use `cprintf_out_size` for `char *`s with a known size stored in a `size_t`.
-  // use `cprintf_out_literal` for string literals.
-  cprintf_out_literal("Hello, ");
+  printf("Hello, ");
   cprintf_color(CPRINTF_FG_GREEN CPRINTF_UNDERLINE);
-  cprintf_out_literal("World!\n");
+  puts("World!");
   cprintf_color(CPRINTF_RESET);
 }
 ```
