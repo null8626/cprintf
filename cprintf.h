@@ -56,7 +56,7 @@ CPRINTF_EXPORT unsigned char cprintf_init(void);
 #define CPRINTF_FG_BOLD               FOREGROUND_INTENSITY |
 #define CPRINTF_BG_BOLD               BACKGROUND_INTENSITY |
 #define CPRINTF_UNDERSCORE            COMMON_LVB_UNDERSCORE |
-#define CPRINTF_UNDERSCORE_ONLY       _def_attr | COMMON_LVB_UNDERSCORE |
+#define CPRINTF_UNDERSCORE_ONLY       _cprintf_def_attr | COMMON_LVB_UNDERSCORE |
 #else
 #include <unistd.h>
 #include <stdio.h>
