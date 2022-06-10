@@ -89,18 +89,6 @@ CPRINTF_EXPORT unsigned char cprintf_init(void);
 #define CPRINTF_UNDERSCORE_ONLY       CPRINTF_UNDERSCORE
 #endif
 
-#ifdef _WIN32
-#define cprintf_handle _cprintf_handle
-#else
-#define cprintf_handle stdout
-#endif
-
-cprintf_scope {
-  cprintf_color(cprintf_fg_green cprintf_bg_red cprintf_fg_bold cprintf_underscore);
-  cprintf_out_literal("Hello, World!");
-  cprintf_color(cprintf_reset);
-}
-
 CPRINTF_EXPORT size_t cprintf_ansi(char * str, const size_t size, const char * fmt, ...);
 CPRINTF_EXPORT void cprintf(const char * fmt, ...);
 
