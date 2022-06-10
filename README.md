@@ -53,7 +53,7 @@ cprintf_scope {
 | `%bm`       | `CPRINTF_BG_MAGENTA`       | Changes the background color to magenta. | -                                                                                  |
 | `%bc`       | `CPRINTF_BG_CYAN`          | Changes the background color to cyan.    | -                                                                                  |
 | `%bw`       | `CPRINTF_BG_WHITE`         | Changes the background color to white.   | -                                                                                  |
-| `%i`        | `CPRINTF_INVERT_`          | Inverts the background and text color.   | -                                                                                  |
+| `%i`        | `CPRINTF_INVERT`           | Inverts the background and text color.   | -                                                                                  |
 | `%u`        | `CPRINTF_UNDERSCORE`       | Adds an underline.                       | If you use the macro on Windows and no other __color__ specifiers are provided (e.g: only `CPRINTF_UNDERSCORE`), no visible text will appear. To circumvent this, use `CPRINTF_UNDERSCORE_ONLY`. |
 | -           | `CPRINTF_UNDERSCORE_ONLY`  | Adds an underline.                       | This is the alias for `CPRINTF_UNDERSCORE` in non-Windows systems.                 |
 
