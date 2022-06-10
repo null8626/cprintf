@@ -97,6 +97,7 @@ typedef struct {
 typedef struct {
   WORD attr;
   unsigned char input_size;
+  unsigned char colored;
 } context_t;
 #else
 typedef ansi_context_t context_t;
@@ -154,6 +155,8 @@ static void cprintf_parse(const char * str, context_t * out) {
 
     while (i < 7) {
       if (colors[i].char_code == tolower(str[1])) {
+        out->colored = 1;
+        
         if (l == 'f') {
           out->attr |= colors[i].foreground;
         } else {
@@ -327,8 +330,8 @@ CPRINTF_EXPORT void cprintf(const char * fmt, ...) {
       i++;
       
 #ifdef _WIN32
-      if (ctx.attr == COMMON_LVB_UNDERSCORE) {
-        ctx.attr = _def_attr;
+      if (!ctx.colored) {
+        ctx.attr |= _def_attr;
       }
       
       SetConsoleTextAttribute(_cprintf_handle, ctx.attr);
@@ -341,8 +344,8 @@ CPRINTF_EXPORT void cprintf(const char * fmt, ...) {
       i--;
       cprintf_parse(fmt + i, &ctx);
 #ifdef _WIN32
-      if (ctx.attr == COMMON_LVB_UNDERSCORE) {
-        ctx.attr = _def_attr;
+      if (!ctx.colored) {
+        ctx.attr |= _def_attr;
       }
 
       SetConsoleTextAttribute(_cprintf_handle, ctx.attr);
