@@ -13,9 +13,24 @@ Want for the library to act like [`chalk`](https://www.npmjs.com/package/chalk)?
 char result[100];
 
 if (cprintf_ansi(result, 100, "Hello, %fg", "world!") == 0) {
-    /* error handling here. 
-       not necessary if you don't use
-       combined format specifiers. */
+  // error handling here. 
+  // not necessary if you don't use
+  // combined format specifiers.
+}
+```
+
+Want to manually set the colors (just like every other console color library)? Do this!
+
+```c
+// using a scope here ensures that cprintf is initiated.
+cprintf_scope {
+  // use `cprintf_out` for `char *`s,
+  // use `cprintf_out_size` for `char *`s with a known size stored in a `size_t`.
+  // use `cprintf_out_literal` for string literals.
+  cprintf_out_literal("Hello, ");
+  cprintf_color(CPRINTF_FG_GREEN CPRINTF_UNDERLINE);
+  cprintf_out_literal("World!\n");
+  cprintf_color(CPRINTF_RESET);
 }
 ```
 

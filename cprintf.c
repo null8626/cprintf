@@ -3,8 +3,8 @@
 #ifdef _WIN32
 #include <windows.h>
 
-static HANDLE con = NULL;
-static WORD def_attr = 0;
+HANDLE _cprintf_handle = NULL;
+WORD _cprintf_def_attr = 0;
 static WORD inverse_def_attr;
 
 #else
@@ -47,20 +47,20 @@ static WORD get_inverse_color(const WORD col) {
   return res;
 }
 
-static unsigned char cprintf_init(void) {
-  if (con != NULL)
+unsigned char cprintf_init(void) {
+  if (_cprintf_handle != NULL)
     return 1;
   
-  if ((con = GetStdHandle(-11)) == NULL)
+  if ((_cprintf_handle = GetStdHandle(-11)) == NULL)
     return 0;
-  else if (def_attr != 0)
+  else if (_cprintf_def_attr != 0)
     return 1;
   
   CONSOLE_SCREEN_BUFFER_INFO info;
-  if (GetConsoleScreenBufferInfo(con, &info) == 0)
+  if (GetConsoleScreenBufferInfo(_cprintf_handle, &info) == 0)
     return 0;
 
-  inverse_def_attr = get_inverse_color(def_attr = info.wAttributes);
+  inverse_def_attr = get_inverse_color(_cprintf_def_attr = info.wAttributes);
   return 1;
 }
 
@@ -326,9 +326,9 @@ CPRINTF_EXPORT void cprintf(const char * fmt, ...) {
       i++;
       
 #ifdef _WIN32
-      SetConsoleTextAttribute(con, ctx.attr);
+      SetConsoleTextAttribute(_cprintf_handle, ctx.attr);
       printf("%s", va_arg(vl, char *));
-      SetConsoleTextAttribute(con, def_attr);
+      SetConsoleTextAttribute(_cprintf_handle, _cprintf_def_attr);
 #else
       printf("%s%s\x1b[0m", ctx.ansi, va_arg(vl, char *));
 #endif
@@ -336,9 +336,9 @@ CPRINTF_EXPORT void cprintf(const char * fmt, ...) {
       i--;
       cprintf_parse(fmt + i, &ctx);
 #ifdef _WIN32
-      SetConsoleTextAttribute(con, ctx.attr);
+      SetConsoleTextAttribute(_cprintf_handle, ctx.attr);
       printf("%s", va_arg(vl, char *));
-      SetConsoleTextAttribute(con, def_attr);
+      SetConsoleTextAttribute(_cprintf_handle, _cprintf_def_attr);
 #else
       printf("%s%s\x1b[0m", ctx.ansi, va_arg(vl, char *));
 #endif
