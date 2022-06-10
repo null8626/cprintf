@@ -6,9 +6,9 @@
 
 #ifdef CPRINTF_DLL
 #ifdef CPRINTF_BUILDING
-#define CPRINTF_EXPORT __declspec(dllexport |
+#define CPRINTF_EXPORT __declspec(dllexport)
 #else
-#define CPRINTF_EXPORT __declspec(dllimport |
+#define CPRINTF_EXPORT __declspec(dllimport)
 #endif
 #else
 #define CPRINTF_EXPORT
@@ -28,7 +28,7 @@ extern WORD _cprintf_def_attr;
 #include <string.h>
 
 CPRINTF_EXPORT unsigned char cprintf_init(void);
-CPRINTF_EXPORT WORD _cprintf_get_inverse(const WORD);
+CPRINTF_EXPORT WORD _cprintf_get_inverse(void);
 
 #define cprintf_scope                 if (_cprintf_handle != NULL || cprintf_init())
 #define cprintf_color(code)           SetConsoleTextAttribute(_cprintf_handle, code 0)
