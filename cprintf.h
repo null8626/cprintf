@@ -22,13 +22,13 @@ extern "C" {
 #ifndef CPRINTF_BUILDING
 extern HANDLE _cprintf_handle;
 extern WORD _cprintf_def_attr;
+extern WORD _cprintf_inverse_def_attr;
 #endif
 
 #include <windows.h>
 #include <string.h>
 
 CPRINTF_EXPORT unsigned char cprintf_init(void);
-CPRINTF_EXPORT WORD _cprintf_get_inverse(void);
 
 #define cprintf_scope                 if (_cprintf_handle != NULL || cprintf_init())
 #define cprintf_color(code)           SetConsoleTextAttribute(_cprintf_handle, code 0)
@@ -36,7 +36,7 @@ CPRINTF_EXPORT WORD _cprintf_get_inverse(void);
 #define cprintf_out_size(text, size)  WriteConsoleA(_cprintf_handle, text, size, NULL, NULL)
 #define cprintf_out_literal(text)     WriteConsoleA(_cprintf_handle, text, sizeof(text) - 1, NULL, NULL)
 #define CPRINTF_RESET                 _cprintf_def_attr |
-#define CPRINTF_INVERT                _cprintf_get_inverse() |
+#define CPRINTF_INVERT                _cprintf_inverse_def_attr |
 #define CPRINTF_FG_BLACK              0 |
 #define CPRINTF_FG_WHITE              FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE |
 #define CPRINTF_BG_BLACK              0 |
@@ -55,7 +55,8 @@ CPRINTF_EXPORT WORD _cprintf_get_inverse(void);
 #define CPRINTF_BG_CYAN               BACKGROUND_BLUE | BACKGROUND_GREEN |
 #define CPRINTF_FG_BOLD               FOREGROUND_INTENSITY |
 #define CPRINTF_BG_BOLD               BACKGROUND_INTENSITY |
-#define CPRINTF_UNDESCORE             COMMON_LVB_UNDERSCORE |
+#define CPRINTF_UNDERSCORE            COMMON_LVB_UNDERSCORE |
+#define CPRINTF_UNDERSCORE_ONLY       _def_attr | COMMON_LVB_UNDERSCORE |
 #else
 #include <unistd.h>
 #include <stdio.h>
@@ -84,7 +85,8 @@ CPRINTF_EXPORT WORD _cprintf_get_inverse(void);
 #define CPRINTF_BG_CYAN               "46;"
 #define CPRINTF_FG_BOLD               "1;"
 #define CPRINTF_BG_BOLD               CPRINTF_FG_BOLD
-#define CPRINTF_UNDESCORE             "4;"
+#define CPRINTF_UNDERSCORE            "4;"
+#define CPRINTF_UNDERSCORE_ONLY       CPRINTF_UNDERSCORE
 #endif
 
 #ifdef _WIN32

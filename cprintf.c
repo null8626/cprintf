@@ -5,7 +5,7 @@
 
 HANDLE _cprintf_handle = NULL;
 WORD _cprintf_def_attr = 0;
-static WORD inverse_def_attr;
+WORD _cprintf_inverse_def_attr;
 
 #else
 #include <string.h>
@@ -28,7 +28,7 @@ static WORD retained_formats[] = {
   FOREGROUND_INTENSITY, BACKGROUND_INTENSITY, COMMON_LVB_UNDERSCORE
 };
 
-CPRINTF_EXPORT WORD _cprintf_get_inverse(void) {
+static WORD _cprintf_get_inverse(void) {
   WORD res = 0;
   unsigned char i;
   
@@ -61,7 +61,7 @@ CPRINTF_EXPORT unsigned char cprintf_init(void) {
     return 0;
 
   _cprintf_def_attr = info.wAttributes;
-  inverse_def_attr = _cprintf_get_inverse();
+  _cprintf_inverse_def_attr = _cprintf_get_inverse();
   return 1;
 }
 
@@ -327,6 +327,10 @@ CPRINTF_EXPORT void cprintf(const char * fmt, ...) {
       i++;
       
 #ifdef _WIN32
+      if (ctx.attr == COMMON_LVB_UNDERSCORE) {
+        ctx.attr = _def_attr;
+      }
+      
       SetConsoleTextAttribute(_cprintf_handle, ctx.attr);
       printf("%s", va_arg(vl, char *));
       SetConsoleTextAttribute(_cprintf_handle, _cprintf_def_attr);
@@ -337,6 +341,10 @@ CPRINTF_EXPORT void cprintf(const char * fmt, ...) {
       i--;
       cprintf_parse(fmt + i, &ctx);
 #ifdef _WIN32
+      if (ctx.attr == COMMON_LVB_UNDERSCORE) {
+        ctx.attr = _def_attr;
+      }
+
       SetConsoleTextAttribute(_cprintf_handle, ctx.attr);
       printf("%s", va_arg(vl, char *));
       SetConsoleTextAttribute(_cprintf_handle, _cprintf_def_attr);
