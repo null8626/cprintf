@@ -28,6 +28,7 @@ extern WORD _cprintf_def_attr;
 #include <string.h>
 
 CPRINTF_EXPORT unsigned char cprintf_init(void);
+CPRINTF_EXPORT WORD _cprintf_get_inverse(const WORD);
 
 #define cprintf_scope                 if (_cprintf_handle != NULL || cprintf_init())
 #define cprintf_color(code)           SetConsoleTextAttribute(_cprintf_handle, code 0)
@@ -35,6 +36,7 @@ CPRINTF_EXPORT unsigned char cprintf_init(void);
 #define cprintf_out_size(text, size)  WriteConsoleA(_cprintf_handle, text, size, NULL, NULL)
 #define cprintf_out_literal(text)     WriteConsoleA(_cprintf_handle, text, sizeof(text) - 1, NULL, NULL)
 #define CPRINTF_RESET                 _cprintf_def_attr |
+#define CPRINTF_INVERT                _cprintf_get_inverse() |
 #define CPRINTF_FG_BLACK              0 |
 #define CPRINTF_FG_WHITE              FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE |
 #define CPRINTF_BG_BLACK              0 |
@@ -63,6 +65,7 @@ CPRINTF_EXPORT unsigned char cprintf_init(void);
 #define cprintf_out_size(text, size)  write(1, text, size)
 #define cprintf_out_literal(text)     write(1, text, sizeof(text) - 1)
 #define CPRINTF_RESET                 "0;"
+#define CPRINTF_INVERT                "7;"
 #define CPRINTF_FG_BLACK              "30;"
 #define CPRINTF_FG_WHITE              "37;"
 #define CPRINTF_BG_BLACK              "40;"

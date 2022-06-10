@@ -28,18 +28,18 @@ static WORD retained_formats[] = {
   FOREGROUND_INTENSITY, BACKGROUND_INTENSITY, COMMON_LVB_UNDERSCORE
 };
 
-static WORD get_inverse_color(const WORD col) {
+CPRINTF_EXPORT WORD _cprintf_get_inverse(void) {
   WORD res = 0;
   unsigned char i;
   
   for (i = 0; i < 6; i++) {
-    if ((col & possible_colors[i]) == 0) {
+    if ((_cprintf_def_attr & possible_colors[i]) == 0) {
       res |= possible_colors[i];
     }
   }
   
   for (i = 0; i < 3; i++) {
-    if (col & retained_formats[i]) {
+    if (_cprintf_def_attr & retained_formats[i]) {
       res |= retained_formats[i];
     }
   }
@@ -47,7 +47,7 @@ static WORD get_inverse_color(const WORD col) {
   return res;
 }
 
-unsigned char cprintf_init(void) {
+CPRINTF_EXPORT unsigned char cprintf_init(void) {
   if (_cprintf_handle != NULL)
     return 1;
   
@@ -60,7 +60,8 @@ unsigned char cprintf_init(void) {
   if (GetConsoleScreenBufferInfo(_cprintf_handle, &info) == 0)
     return 0;
 
-  inverse_def_attr = get_inverse_color(_cprintf_def_attr = info.wAttributes);
+  _cprintf_def_attr = info.wAttributes;
+  inverse_def_attr = _cprintf_get_inverse();
   return 1;
 }
 

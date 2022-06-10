@@ -22,7 +22,7 @@ if (cprintf_ansi(result, 100, "Hello, %fg", "world!") == 0) {
 Want to manually set the colors (just like every other console color library)? Do this!
 
 ```c
-// using a scope here ensures that cprintf is initiated.
+// using `cprintf_scope` here ensures that cprintf is initiated.
 cprintf_scope {
   // use `cprintf_out` for `char *`s,
   // use `cprintf_out_size` for `char *`s with a known size stored in a `size_t`.
@@ -34,27 +34,27 @@ cprintf_scope {
 }
 ```
 
-# Table of formats
-| Format name | Description                              | Extra notes                                                                        |
-|-------------|------------------------------------------|------------------------------------------------------------------------------------|
-| `%fk`       | Changes the text color to black.         | Windows builds does not support this format.                                       |
-| `%fr`       | Changes the text color to red.           | -                                                                                  |
-| `%fg`       | Changes the text color to green.         | -                                                                                  |
-| `%fy`       | Changes the text color to yellow.        | -                                                                                  |
-| `%fb`       | Changes the text color to blue.          | -                                                                                  |
-| `%fm`       | Changes the text color to magenta.       | -                                                                                  |
-| `%fc`       | Changes the text color to cyan.          | -                                                                                  |
-| `%fw`       | Changes the text color to white.         | -                                                                                  |
-| `%bk`       | Changes the background color to black.   | Windows builds does not support this format.                                       |
-| `%br`       | Changes the background color to red.     | -                                                                                  |
-| `%bg`       | Changes the background color to green.   | -                                                                                  |
-| `%by`       | Changes the background color to yellow.  | -                                                                                  |
-| `%bb`       | Changes the background color to blue.    | -                                                                                  |
-| `%bm`       | Changes the background color to magenta. | -                                                                                  |
-| `%bc`       | Changes the background color to cyan.    | -                                                                                  |
-| `%bw`       | Changes the background color to white.   | -                                                                                  |
-| `%i`        | Inverts the background and text color.   | -                                          |
-| `%u`        | Adds an underline.                       | In windows, if no color is provided (e.g: only `%u`), no visible text will appear. |
+# Supported specifiers
+| Format name | Macro name           | Description                              | Extra notes                                                                        |
+|-------------|----------------------|------------------------------------------|------------------------------------------------------------------------------------|
+| `%fk`       | `CPRINTF_FG_BLACK`   | Changes the text color to black.         | Windows builds does not support this format.                                       |
+| `%fr`       | `CPRINTF_FG_RED`     | Changes the text color to red.           | -                                                                                  |
+| `%fg`       | `CPRINTF_FG_GREEN`   | Changes the text color to green.         | -                                                                                  |
+| `%fy`       | `CPRINTF_FG_YELLOW`  | Changes the text color to yellow.        | -                                                                                  |
+| `%fb`       | `CPRINTF_FG_BLUE`    | Changes the text color to blue.          | -                                                                                  |
+| `%fm`       | `CPRINTF_FG_MAGENTA` | Changes the text color to magenta.       | -                                                                                  |
+| `%fc`       | `CPRINTF_FG_CYAN`    | Changes the text color to cyan.          | -                                                                                  |
+| `%fw`       | `CPRINTF_FG_WHITE`   | Changes the text color to white.         | -                                                                                  |
+| `%bk`       | `CPRINTF_BG_BLACK`   | Changes the background color to black.   | Windows builds does not support this format.                                       |
+| `%br`       | `CPRINTF_BG_RED`     | Changes the background color to red.     | -                                                                                  |
+| `%bg`       | `CPRINTF_BG_GREEN`   | Changes the background color to green.   | -                                                                                  |
+| `%by`       | `CPRINTF_BG_YELLOW`  | Changes the background color to yellow.  | -                                                                                  |
+| `%bb`       | `CPRINTF_BG_BLUE`    | Changes the background color to blue.    | -                                                                                  |
+| `%bm`       | `CPRINTF_BG_MAGENTA` | Changes the background color to magenta. | -                                                                                  |
+| `%bc`       | `CPRINTF_BG_CYAN`    | Changes the background color to cyan.    | -                                                                                  |
+| `%bw`       | `CPRINTF_BG_WHITE`   | Changes the background color to white.   | -                                                                                  |
+| `%i`        | `CPRINTF_INVERT_`    | Inverts the background and text color.   | -                                          |
+| `%u`        | `CPRINTF_UNDERLINE`  | Adds an underline.                       | In windows, if no color is provided (e.g: only `%u`), no visible text will appear. |
 
 # Bold
 You can make a text bold or background color brighter by capitalizing the format specifier. Example:
