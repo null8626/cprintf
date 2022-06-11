@@ -17,25 +17,30 @@ WORD _cprintf_inverse_def_attr;
 #define CPRINTF_INIT_CONTENTS()                                                                                        \
     if (_cprintf_handle != NULL)                                                                                       \
         return 1;                                                                                                      \
+                                                                                                                       \
     if ((_cprintf_handle = GetStdHandle(-11)) == NULL)                                                                 \
         return 0;                                                                                                      \
+                                                                                                                       \
     else if (_cprintf_def_attr != 0)                                                                                   \
         return 1;                                                                                                      \
+                                                                                                                       \
     CONSOLE_SCREEN_BUFFER_INFO info;                                                                                   \
-    if (GetConsoleScreenBufferInfo(_cprintf_handle, &info) == 0)                                                       \
-        return 0;                                                                                                      \
+    \ if (GetConsoleScreenBufferInfo(_cprintf_handle, &info) == 0) return 0;                                           \
+                                                                                                                       \
     _cprintf_def_attr = info.wAttributes;                                                                              \
     _cprintf_inverse_def_attr = _cprintf_get_inverse();                                                                \
     return 1
 
 static WORD possible_colors[] = {FOREGROUND_RED, FOREGROUND_GREEN, FOREGROUND_BLUE,
                                  BACKGROUND_RED, BACKGROUND_GREEN, BACKGROUND_BLUE};
+
 static WORD retained_formats[] = {FOREGROUND_INTENSITY, BACKGROUND_INTENSITY, COMMON_LVB_UNDERSCORE};
 
 static WORD _cprintf_get_inverse(void)
 {
     WORD res = 0;
     unsigned char i;
+
     for (i = 0; i < 6; i++)
     {
         if ((_cprintf_def_attr & possible_colors[i]) == 0)
@@ -43,6 +48,7 @@ static WORD _cprintf_get_inverse(void)
             res |= possible_colors[i];
         }
     }
+
     for (i = 0; i < 3; i++)
     {
         if (_cprintf_def_attr & retained_formats[i])
@@ -50,6 +56,7 @@ static WORD _cprintf_get_inverse(void)
             res |= retained_formats[i];
         }
     }
+
     return res;
 }
 
@@ -111,22 +118,27 @@ static void cprintf_ansi_parse(const char *str, ansi_context_t *out)
     {
         out->input_size = 2;
         unsigned char i = 0;
+
         while (i < 8)
         {
             if (ansi_order[i] == tolower(str[1]))
             {
                 strcpy(out->ansi + out->ansi_len, "\x1b[");
                 strcpy(out->ansi + out->ansi_len + 4, "m");
+
                 out->ansi[out->ansi_len + 2] = '3' + (l == 'f');
                 out->ansi[out->ansi_len + 3] = '0' + i;
                 out->ansi_len += 5;
+
                 if (l != str[0])
                 {
                     strcpy(out->ansi + out->ansi_len - 1, ";1m");
                     out->ansi_len += 2;
                 }
+
                 break;
             }
+
             i++;
         }
     }
@@ -150,15 +162,18 @@ static void cprintf_parse(const char *str, context_t *out)
 {
     out->input_size = 1;
     const char l = tolower(str[0]);
+
     if (l == 'f' || l == 'b')
     {
         out->input_size = 2;
         unsigned char i = 0;
+
         while (i < 7)
         {
             if (colors[i].char_code == tolower(str[1]))
             {
                 out->colored = 1;
+
                 if (l == 'f')
                 {
                     out->attr |= colors[i].foreground;
@@ -167,8 +182,10 @@ static void cprintf_parse(const char *str, context_t *out)
                 {
                     out->attr |= colors[i].background;
                 }
+
                 if (l != str[0])
                     out->attr |= l == 'b' ? BACKGROUND_INTENSITY : FOREGROUND_INTENSITY;
+
                 break;
             }
             i++;
@@ -336,13 +353,16 @@ CPRINTF_EXPORT void cprintf(const char *fmt, ...)
             putchar(c);
             continue;
         }
+
         memset(&ctx, 0, sizeof(context_t));
+
         if (c == '{')
         {
             while (1)
             {
                 cprintf_parse(fmt + i, &ctx);
                 i += ctx.input_size;
+
                 if (fmt[i] != ',')
                 {
                     return;
@@ -382,8 +402,10 @@ CPRINTF_EXPORT void cprintf(const char *fmt, ...)
 
             i += ctx.input_size;
         }
+
         status = STATUS_NULL;
     }
+
     va_end(vl);
 }
 
