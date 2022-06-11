@@ -194,7 +194,7 @@ static void cprintf_parse(const char *str, context_t *out)
     }
     else if (l == 'i')
     {
-        out->attr = inverse_def_attr;
+        out->attr = _cprintf_inverse_def_attr;
     }
     if (l == 'u')
     {
@@ -375,7 +375,7 @@ CPRINTF_EXPORT void cprintf(const char *fmt, ...)
 #ifdef _WIN32
             if (!ctx.colored)
             {
-                ctx.attr |= _def_attr;
+                ctx.attr |= _cprintf_def_attr;
             }
             SetConsoleTextAttribute(_cprintf_handle, ctx.attr);
             printf("%s", va_arg(vl, char *));
@@ -392,7 +392,7 @@ CPRINTF_EXPORT void cprintf(const char *fmt, ...)
 #ifdef _WIN32
             if (!ctx.colored)
             {
-                ctx.attr |= _def_attr;
+                ctx.attr |= _cprintf_def_attr;
             }
             SetConsoleTextAttribute(_cprintf_handle, ctx.attr);
             printf("%s", va_arg(vl, char *));

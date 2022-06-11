@@ -53,7 +53,7 @@ cprintf_scope {
 | `%i`              | `CPRINTF_INVERT`           | Inverts the background and text color.   | -                                                                                  |
 | `%u`              | `CPRINTF_UNDERSCORE`       | Adds an underline.                       | If you use the macro on Windows and no other __color__ specifiers are provided (e.g: only `CPRINTF_UNDERSCORE`), no visible text will appear. To circumvent this, use `CPRINTF_UNDERSCORE_ONLY`. |
 | -                 | `CPRINTF_UNDERSCORE_ONLY`  | Adds an underline.                       | This is the alias for `CPRINTF_UNDERSCORE` in non-Windows systems.                 |
-| *see extra notes* | `CPRINTF_BOLD`             | Changes the text into a bolder version.  | You can make a text bold or background color brighter by capitalizing the format specifier. Example: `%FR`, `%BB` | -                                                                                  |
+| *see extra notes* | `CPRINTF_FG_BOLD` or `CPRINTF_BG_BOLD` | Changes the text into a bolder version.  | You can make a text bold or background color brighter by capitalizing the format specifier. Example: `%FR`, `%BB` | -                                                                                  |
 
 # Combining formats
 You can combine multiple formats too, with `%{...}`. Example:
