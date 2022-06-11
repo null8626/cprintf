@@ -5,63 +5,43 @@ on:
   release:
     types: [published]
 jobs:
-  build-msvc:
-    name: Build for MSVC
+  build-windows:
+    name: Build for Windows
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: x64
-      - name: Compile (static library)
+      - name: CMake
         run: |
-           nmake /nologo /f VSMakefile
-      - name: Compile (shared library)
+          cmake -B build .
+          cmake build
+      - name: Build
         run: |
-          del *.obj
-          nmake /nologo /f VSMakefile SHARED=yes
+          cd build
+          msbuild cprintf.sln -noLogo -p:Configuration=Release
+          cd Release
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: libcprintf-windows-msvc
+          name: cprintf-windows
           path: |
             *.lib
             *.dll
-  build-mingw:
-    name: Build for MinGW
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Compile (shared library)
-        run: |
-          make WIN=yes SHARED=yes
-      - name: Compile (static library)
-        run: |
-          del *.o
-          make WIN=yes
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: libcprintf-windows-mingw
-          path: |
-            *.a
-            *.so
   build-macos:
     name: Build for macOS 
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Compile (shared library)
+      - name: CMake
         run: |
-          make -f Macfile SHARED=yes
-      - name: Compile (static library)
+          cmake -B build .
+          cmake build
+      - name: Build
         run: |
-          rm *.o
-          make -f Macfile
-      - name: Upload artifact
+          cd build
+          make
         uses: actions/upload-artifact@v2
         with:
-          name: libcprintf-macos
+          name: cprintf-macos
           path: |
             *.a
             *.dylib
@@ -70,24 +50,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Compile (shared library)
+      - name: CMake
         run: |
-          make SHARED=yes
-      - name: Compile (static library)
+          cmake -B build .
+          cmake build
+      - name: Build
         run: |
-          rm *.o
+          cd build
           make
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: libcprintf-linux
+          name: cprintf-linux
           path: |
             *.a
             *.so
   publish:
     needs:
-      - build-mingw
-      - build-msvc
+      - build-windows
       - build-macos
       - build-linux
     name: Publish
@@ -105,23 +85,14 @@ jobs:
           cd artifacts
           for i in */; do zip -0 -r "${i%/}.zip" "$i" & done; wait
           mv *.zip ..
-      - name: Upload Windows MSVC artifact
+      - name: Upload Windows artifact
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./libcprintf-windows-msvc.zip
-          asset_name: libcprintf-windows-msvc.zip
-          asset_content_type: application/zip
-      - name: Upload Windows MinGW artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./libcprintf-windows-mingw.zip
-          asset_name: libcprintf-windows-mingw.zip
+          asset_path: ./cprintf-windows.zip
+          asset_name: cprintf-windows.zip
           asset_content_type: application/zip
       - name: Upload macOS artifact
         uses: actions/upload-release-asset@v1
@@ -129,8 +100,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./libcprintf-macos.zip
-          asset_name: libcprintf-macos.zip
+          asset_path: ./cprintf-macos.zip
+          asset_name: cprintf-macos.zip
           asset_content_type: application/zip
       - name: Upload Linux artifact
         uses: actions/upload-release-asset@v1
@@ -138,6 +109,6 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./libcprintf-linux.zip
-          asset_name: libcprintf-linux.zip
+          asset_path: ./cprintf-linux.zip
+          asset_name: cprintf-linux.zip
           asset_content_type: application/zip

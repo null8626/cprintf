@@ -92,7 +92,7 @@ make
 - For Windows:
 
 ```console
-msbuild build/cprintf.sln -noLogo -noConLog -p:Configuration=Release
+msbuild build/cprintf.sln -noLogo -p:Configuration=Release
 ```
 
 And the library files should be there in the `build/Release` directory.
