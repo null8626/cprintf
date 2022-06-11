@@ -29,9 +29,9 @@ CPRINTF_EXPORT unsigned char _cprintf_init(void);
 #ifdef _WIN32
 
 #ifndef CPRINTF_BUILDING
-    extern HANDLE _cprintf_handle;
-    extern WORD _cprintf_def_attr;
-    extern WORD _cprintf_inverse_def_attr;
+    CPRINTF_EXPORT extern HANDLE _cprintf_handle;
+    CPRINTF_EXPORT extern WORD _cprintf_def_attr;
+    CPRINTF_EXPORT extern WORD _cprintf_inverse_def_attr;
 #endif
 
 #include <windows.h>

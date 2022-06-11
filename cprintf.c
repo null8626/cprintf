@@ -2,9 +2,9 @@
 
 #ifdef _WIN32
 #include <windows.h>
-HANDLE _cprintf_handle = NULL;
-WORD _cprintf_def_attr = 0;
-WORD _cprintf_inverse_def_attr;
+CPRINTF_EXPORT HANDLE _cprintf_handle = NULL;
+CPRINTF_EXPORT WORD _cprintf_def_attr = 0;
+CPRINTF_EXPORT WORD _cprintf_inverse_def_attr;
 #else
 #include <string.h>
 #endif
