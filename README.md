@@ -29,6 +29,12 @@ if (cprintf_ansi(result, 100, "Hello, %fg", "world!") == 0) {
 
 size_t size = cprintf_ansi(NULL, 0, "Hello, %fg", "world!");
 ```
+Use standard error instead stdout (default)
+```c
+cprintf_use(CPRINTF_STDERR);
+...
+cprintf_use(CPRINTF_STDOUT);
+```
 
 # Supported specifiers
 | Format name       | Description                              |
