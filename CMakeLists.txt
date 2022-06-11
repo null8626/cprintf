@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.12)
 
 set(CPRINTF_SRC cprintf.c)
 set(CPRINTF_NAME cprintf)
-set(CPRINTF_VERSION 1.0.1)
+set(CPRINTF_VERSION 1.1.0)
 
 project(${CPRINTF_NAME})
 
