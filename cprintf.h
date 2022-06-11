@@ -27,14 +27,13 @@ CPRINTF_EXPORT unsigned char _cprintf_init(void);
 #endif
 
 #ifdef _WIN32
+#include <windows.h>
 
 #ifndef CPRINTF_BUILDING
     CPRINTF_EXPORT extern HANDLE _cprintf_handle;
     CPRINTF_EXPORT extern WORD _cprintf_def_attr;
     CPRINTF_EXPORT extern WORD _cprintf_inverse_def_attr;
 #endif
-
-#include <windows.h>
 
 #define cprintf_color(code) SetConsoleTextAttribute(_cprintf_handle, code 0)
 #define CPRINTF_RESET _cprintf_def_attr |

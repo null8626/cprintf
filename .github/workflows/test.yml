@@ -43,6 +43,7 @@ jobs:
         run: |
           cd build
           make
+          ls
   build-linux:
     name: Build for Linux
     runs-on: ubuntu-latest

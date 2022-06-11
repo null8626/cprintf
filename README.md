@@ -1,5 +1,12 @@
 # cprintf
 
+Include this:
+```c
+// uncomment this next line if you're not using the DLL
+// #define CPRINTF_DLL
+
+#include <cprintf.h>
+```
 Portable C/C++ Library for printing colored text on the terminal with the C formatting style.
 ```c
 cprintf("Hello, %fg world!\n", "green text!!!");

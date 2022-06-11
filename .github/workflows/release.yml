@@ -112,3 +112,12 @@ jobs:
           asset_path: ./cprintf-linux.zip
           asset_name: cprintf-linux.zip
           asset_content_type: application/zip
+      - name: Upload include file
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ../cprintf.h
+          asset_name: cprintf.h
+          asset_content_type: text/plain
