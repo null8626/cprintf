@@ -387,6 +387,7 @@ CPRINTF_EXPORT void cprintf(const char *fmt, ...)
     va_end(vl);
 }
 
+#ifdef CPRINTF_DLL
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD dwReason, LPVOID lpReserved)
 {
     if (dwReason == DLL_PROCESS_ATTACH)
@@ -396,3 +397,4 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD dwReason, LPVOID lpReserved)
 
     return TRUE;
 }
+#endif
