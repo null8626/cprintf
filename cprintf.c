@@ -204,7 +204,7 @@ static void cprintf_parse(const char *str, context_t *out)
 
 #endif
 
-#define STATUS_NULL 0
+#define STATUS_NULL   0
 #define STATUS_ESCAPE 1
 #define STATUS_FMT2
 
