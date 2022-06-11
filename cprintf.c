@@ -209,7 +209,9 @@ static void cprintf_parse(const char *str, context_t *out)
 #define CPRINTF_PUTCHAR(character) fputc(character, _cprintf_handle)
 #endif
 
-CPRINTF_EXPORT size_t cprintf_ansi(char *str, const size_t size, const char *fmt, ...)
+#define CPRINTF_SIZE_T_MAX ((size_t)-1)
+
+CPRINTF_EXPORT size_t cprintf_ansi(char *str, size_t size, const char *fmt, ...)
 {
     ansi_context_t ctx;
 
@@ -222,7 +224,12 @@ CPRINTF_EXPORT size_t cprintf_ansi(char *str, const size_t size, const char *fmt
     char *c_ptr;
     char c;
 
-    while ((c = fmt[i]) != 0 && copied < size)
+    if (size == 0)
+    {
+        size = CPRINTF_SIZE_T_MAX;
+    }
+
+    while ((c = fmt[i]) != 0 || (copied >= size && size != CPRINTF_SIZE_T_MAX))
     {
         i++;
         if (c == '\\')
@@ -233,7 +240,11 @@ CPRINTF_EXPORT size_t cprintf_ansi(char *str, const size_t size, const char *fmt
             }
             else
             {
-                str[copied] = '\\';
+                if (str != NULL)
+                {
+                    str[copied] = '\\';
+                }
+
                 copied++;
                 status = STATUS_NULL;
             }
@@ -243,7 +254,11 @@ CPRINTF_EXPORT size_t cprintf_ansi(char *str, const size_t size, const char *fmt
         {
             if (status == STATUS_ESCAPE)
             {
-                str[copied] = '%';
+                if (str != NULL)
+                {
+                    str[copied] = '%';
+                }
+
                 copied++;
                 status = STATUS_NULL;
             }
@@ -255,15 +270,17 @@ CPRINTF_EXPORT size_t cprintf_ansi(char *str, const size_t size, const char *fmt
         }
         else if (status == STATUS_NULL)
         {
-            if (copied == size)
+            if (str != NULL)
             {
-                return copied;
+                str[copied] = c;
             }
-            str[copied] = c;
+
             copied++;
             continue;
         }
+
         memset(&ctx, 0, sizeof(ansi_context_t));
+
         if (c == '{')
         {
             while (1)
@@ -286,23 +303,39 @@ CPRINTF_EXPORT size_t cprintf_ansi(char *str, const size_t size, const char *fmt
         }
         for (c_ptr = &ctx.ansi[0]; copied < size && *c_ptr; c_ptr++)
         {
-            str[copied] = *c_ptr;
+            if (str != NULL)
+            {
+                str[copied] = *c_ptr;
+            }
+
             copied++;
         }
         for (c_ptr = va_arg(vl, char *); copied < size && *c_ptr; c_ptr++)
         {
-            str[copied] = *c_ptr;
+            if (str != NULL)
+            {
+                str[copied] = *c_ptr;
+            }
+
             copied++;
         }
         for (c_ptr = "\x1b[0m"; copied < size && *c_ptr; c_ptr++)
         {
-            str[copied] = *c_ptr;
+            if (str != NULL)
+            {
+                str[copied] = *c_ptr;
+            }
+
             copied++;
         }
         status = STATUS_NULL;
     }
 
-    str[copied] = 0;
+    if (str != NULL)
+    {
+        str[copied] = 0;
+    }
+
     return copied;
 }
 
@@ -310,10 +343,14 @@ CPRINTF_EXPORT void cprintf(const char *fmt, ...)
 {
 #if defined(_WIN32) && !defined(CPRINTF_DLL)
     if (_cprintf_handle == NULL && cprintf_use(CPRINTF_STDOUT) == 0)
+    {
         return;
+    }
 #elif !defined(_WIN32)
     if (_cprintf_handle == NULL)
+    {
         _cprintf_handle = stdout;
+    }
 #endif
 
     context_t ctx;

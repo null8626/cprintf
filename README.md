@@ -24,6 +24,10 @@ if (cprintf_ansi(result, 100, "Hello, %fg", "world!") == 0) {
   // not necessary if you don't use
   // combined format specifiers.
 }
+
+// ...or you can use malloc!
+
+size_t size = cprintf_ansi(NULL, 0, "Hello, %fg", "world!");
 ```
 
 # Supported specifiers
