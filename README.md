@@ -26,8 +26,6 @@ if (cprintf_ansi(result, 100, "Hello, %fg", "world!") == 0) {
 }
 ```
 
-You can also use macros evaluated at compile time!
-
 # Supported specifiers
 | Format name       | Description                              |
 |-------------------|------------------------------------------|
@@ -48,8 +46,7 @@ You can also use macros evaluated at compile time!
 | `%bc`             | Changes the background color to cyan.    |
 | `%bw`             | Changes the background color to white.   |
 | `%i`              | Inverts the background and text color.   |
-| `%u`              | Adds an underline.                       |
-| -                 | Adds an underline.                       |
+| `%u`              | Adds an underline.                       
 
 ## Bold
 
