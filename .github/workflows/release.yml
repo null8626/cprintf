@@ -39,6 +39,7 @@ jobs:
         run: |
           cd build
           make
+      - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: cprintf-macos

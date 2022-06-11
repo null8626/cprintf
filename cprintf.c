@@ -203,9 +203,8 @@ static void cprintf_parse(const char *str, context_t *out)
 #define STATUS_ESCAPE 1
 #define STATUS_FMT 2
 
-
-
-static inline void cprintf_putchar(const char c) {
+static inline void cprintf_putchar(const char c)
+{
 #ifdef _WIN32
     WriteConsoleA(_cprintf_handle, &c, 1, NULL, NULL);
 #else
@@ -459,11 +458,6 @@ CPRINTF_EXPORT void cprintf(const char *fmt, ...)
 #ifdef CPRINTF_DLL
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD dwReason, LPVOID lpReserved)
 {
-    if (dwReason == DLL_PROCESS_ATTACH)
-    {
-        return (BOOL)cprintf_use(CPRINTF_STDOUT);
-    }
-
-    return TRUE;
+    return dwReason != DLL_PROCESS_ATTACH || (BOOL)cprintf_use(CPRINTF_STDOUT);
 }
 #endif
