@@ -16,13 +16,10 @@ env:
   pull_request: null
 jobs:
   build-msvc:
-    name: Build for MSVC
+    name: Build for Windows
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: x64
       - name: CMake
         run: |
           cmake -B build .
@@ -30,19 +27,6 @@ jobs:
       - name: Build
         run: |
           msbuild build/cprintf.sln -noLogo
-  build-mingw:
-    name: Build for MinGW
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: CMake
-        run: |
-          cmake -B build .
-          cmake build
-      - name: Build
-        run: |
-          cd build
-          make
   build-macos:
     name: Build for MacOS 
     runs-on: macos-latest

@@ -82,14 +82,14 @@ cmake build
 
 And then:
 
-- For Non-MSVC compilers:
+- For POSIX:
 
 ```console
 cd build
 make
 ```
 
-- For MSVC:
+- For Windows:
 
 ```console
 msbuild build/cprintf.sln -noLogo -noConLog -p:Configuration=Release

@@ -7,7 +7,7 @@ set(CPRINTF_VERSION 1.0.1)
 project(${CPRINTF_NAME})
 
 add_library(${CPRINTF_NAME}   SHARED ${CPRINTF_SRC})
-add_library(${CPRINTF_NAME}_s STATIC ${CPRINTF_SRC})
+add_library(lib${CPRINTF_NAME} STATIC ${CPRINTF_SRC})
 
 add_compile_definitions(CPRINTF_BUILDING)
 add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
@@ -17,9 +17,9 @@ set_property(TARGET ${CPRINTF_NAME} PROPERTY COMPILE_DEFINITIONS CPRINTF_DLL)
 endif()
 
 set_property(TARGET ${CPRINTF_NAME}   PROPERTY OUTPUT_NAME ${CPRINTF_NAME})
-set_property(TARGET ${CPRINTF_NAME}_s PROPERTY OUTPUT_NAME ${CPRINTF_NAME}_s)
+set_property(TARGET lib${CPRINTF_NAME} PROPERTY OUTPUT_NAME ${CPRINTF_NAME}_s)
 
-set_target_properties(${CPRINTF_NAME} ${CPRINTF_NAME}_s PROPERTIES
+set_target_properties(${CPRINTF_NAME} lib${CPRINTF_NAME} PROPERTIES
   VERSION               ${CPRINTF_VERSION}
   SOVERSION             1
   MSVC_RUNTIME_LIBRARY  MultiThreadedDLL
