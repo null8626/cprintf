@@ -1,8 +1,8 @@
 #ifndef CPRINTF_H
 #define CPRINTF_H
 
-#include <stdbool.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stddef.h>
 
 #ifdef CPRINTF_DLL
@@ -24,7 +24,7 @@ typedef DWORD cprintf_fd_t;
 #include <stdio.h>
 #define CPRINTF_STDOUT stdout
 #define CPRINTF_STDERR stderr
-typedef FILE * cprintf_fd_t;
+typedef FILE *cprintf_fd_t;
 #endif
 
 #ifdef __cplusplus

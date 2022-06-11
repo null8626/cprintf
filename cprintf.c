@@ -7,7 +7,7 @@ static WORD _cprintf_def_attr;
 static WORD _cprintf_inverse_def_attr;
 #else
 #include <string.h>
-static FILE * _cprintf_handle = NULL;
+static FILE *_cprintf_handle = NULL;
 #endif
 
 #include <ctype.h>
@@ -86,15 +86,16 @@ typedef ansi_context_t context_t;
 
 #endif
 
-CPRINTF_EXPORT bool cprintf_use(const cprintf_fd_t type) {
+CPRINTF_EXPORT bool cprintf_use(const cprintf_fd_t type)
+{
 #ifdef _WIN32
     if ((_cprintf_handle = GetStdHandle(type)) == NULL)
         return false;
-    
+
     CONSOLE_SCREEN_BUFFER_INFO info;
     if (GetConsoleScreenBufferInfo(_cprintf_handle, &info) == 0)
         return false;
-    
+
     _cprintf_def_attr = info.wAttributes;
     _cprintf_inverse_def_attr = _cprintf_get_inverse();
 #else
