@@ -2,7 +2,7 @@
 
 Include this:
 ```c
-// uncomment this next line if you're not using the DLL
+// uncomment next line if you're using the DLL
 // #define CPRINTF_DLL
 
 #include <cprintf.h>
