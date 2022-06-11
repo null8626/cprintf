@@ -23,46 +23,49 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
-      - name: Compile (static library)
+      - name: CMake
         run: |
-           nmake /nologo /f VSMakefile
-      - name: Compile (shared library)
+          cmake -B build .
+          cmake build
+      - name: Build
         run: |
-          del *.obj
-          nmake /nologo /f VSMakefile SHARED=yes
+          msbuild build/cprintf.sln -noLogo
   build-mingw:
     name: Build for MinGW
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Compile (static library)
+      - name: CMake
         run: |
-          make WIN=yes
-      - name: Compile (shared library)
+          cmake -B build .
+          cmake build
+      - name: Build
         run: |
-          del *.o
-          make WIN=yes SHARED=yes
+          cd build
+          make
   build-macos:
     name: Build for MacOS 
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Compile (static library)
+      - name: CMake
         run: |
-          make -f Macfile
-      - name: Compile (shared library)
+          cmake -B build .
+          cmake build
+      - name: Build
         run: |
-          rm *.o
-          make -f Macfile SHARED=yes
+          cd build
+          make
   build-linux:
     name: Build for Linux
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Compile (static library)
+      - name: CMake
         run: |
+          cmake -B build .
+          cmake build
+      - name: Build
+        run: |
+          cd build
           make
-      - name: Compile (shared library)
-        run: |
-          rm *.o
-          make SHARED=yes

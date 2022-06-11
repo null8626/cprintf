@@ -204,9 +204,9 @@ static void cprintf_parse(const char *str, context_t *out)
 
 #endif
 
-#define STATUS_NULL   0
+#define STATUS_NULL 0
 #define STATUS_ESCAPE 1
-#define STATUS_FMT2
+#define STATUS_FMT 2
 
 CPRINTF_EXPORT size_t cprintf_ansi(char *str, const size_t size, const char *fmt, ...)
 {

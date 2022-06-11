@@ -82,8 +82,17 @@ cmake build
 
 And then:
 
+- For Non-MSVC compilers:
+
+```console
+cd build
+make
+```
+
 - For MSVC:
 
 ```console
 msbuild build/cprintf.sln -noLogo -noConLog -p:Configuration=Release
 ```
+
+And the library files should be there in the `build/Release` directory.
