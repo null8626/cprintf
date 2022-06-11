@@ -203,11 +203,15 @@ static void cprintf_parse(const char *str, context_t *out)
 #define STATUS_ESCAPE 1
 #define STATUS_FMT 2
 
+
+
+static inline void cprintf_putchar(const char c) {
 #ifdef _WIN32
-#define CPRINTF_PUTCHAR(character) WriteConsoleA(_cprintf_handle, &character, 1, NULL, NULL)
+    WriteConsoleA(_cprintf_handle, &c, 1, NULL, NULL);
 #else
-#define CPRINTF_PUTCHAR(character) fputc(character, _cprintf_handle)
+    fputc(c, _cprintf_handle);
 #endif
+}
 
 #define CPRINTF_SIZE_T_MAX ((size_t)-1)
 
@@ -373,7 +377,7 @@ CPRINTF_EXPORT void cprintf(const char *fmt, ...)
             }
             else
             {
-                CPRINTF_PUTCHAR('\\');
+                cprintf_putchar('\\');
                 status = STATUS_NULL;
             }
             continue;
@@ -382,7 +386,7 @@ CPRINTF_EXPORT void cprintf(const char *fmt, ...)
         {
             if (status == STATUS_ESCAPE)
             {
-                CPRINTF_PUTCHAR('%');
+                cprintf_putchar('%');
                 status = STATUS_NULL;
             }
             else
@@ -393,7 +397,7 @@ CPRINTF_EXPORT void cprintf(const char *fmt, ...)
         }
         else if (status == STATUS_NULL)
         {
-            CPRINTF_PUTCHAR(c);
+            cprintf_putchar(c);
             continue;
         }
 
