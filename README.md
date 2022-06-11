@@ -32,7 +32,7 @@ You can also use macros evaluated at compile time!
 // using `cprintf_scope` here ensures that cprintf is initiated.
 cprintf_scope {
   printf("Hello, ");
-  cprintf_color(CPRINTF_FG_GREEN CPRINTF_UNDERLINE);
+  cprintf_color(CPRINTF_FG_GREEN CPRINTF_UNDERSCORE);
   puts("World!");
   cprintf_color(CPRINTF_RESET);
 }
