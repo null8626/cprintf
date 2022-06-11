@@ -28,39 +28,32 @@ if (cprintf_ansi(result, 100, "Hello, %fg", "world!") == 0) {
 
 You can also use macros evaluated at compile time!
 
-```c
-// using `cprintf_scope` here ensures that cprintf is initiated.
-cprintf_scope {
-  printf("Hello, ");
-  cprintf_color(CPRINTF_FG_GREEN CPRINTF_UNDERSCORE);
-  puts("World!");
-  cprintf_color(CPRINTF_RESET);
-}
-```
-
 # Supported specifiers
-| Format name       | Macro name                 | Description                              | Extra notes                                                                        |
-|-------------------|----------------------------|------------------------------------------|------------------------------------------------------------------------------------|
-| `%fk`             | `CPRINTF_FG_BLACK`         | Changes the text color to black.         | -                                                                                  |
-| `%fr`             | `CPRINTF_FG_RED`           | Changes the text color to red.           | -                                                                                  |
-| `%fg`             | `CPRINTF_FG_GREEN`         | Changes the text color to green.         | -                                                                                  |
-| `%fy`             | `CPRINTF_FG_YELLOW`        | Changes the text color to yellow.        | -                                                                                  |
-| `%fb`             | `CPRINTF_FG_BLUE`          | Changes the text color to blue.          | -                                                                                  |
-| `%fm`             | `CPRINTF_FG_MAGENTA`       | Changes the text color to magenta.       | -                                                                                  |
-| `%fc`             | `CPRINTF_FG_CYAN`          | Changes the text color to cyan.          | -                                                                                  |
-| `%fw`             | `CPRINTF_FG_WHITE`         | Changes the text color to white.         | -                                                                                  |
-| `%bk`             | `CPRINTF_BG_BLACK`         | Changes the background color to black.   | -                                                                                  |
-| `%br`             | `CPRINTF_BG_RED`           | Changes the background color to red.     | -                                                                                  |
-| `%bg`             | `CPRINTF_BG_GREEN`         | Changes the background color to green.   | -                                                                                  |
-| `%by`             | `CPRINTF_BG_YELLOW`        | Changes the background color to yellow.  | -                                                                                  |
-| `%bb`             | `CPRINTF_BG_BLUE`          | Changes the background color to blue.    | -                                                                                  |
-| `%bm`             | `CPRINTF_BG_MAGENTA`       | Changes the background color to magenta. | -                                                                                  |
-| `%bc`             | `CPRINTF_BG_CYAN`          | Changes the background color to cyan.    | -                                                                                  |
-| `%bw`             | `CPRINTF_BG_WHITE`         | Changes the background color to white.   | -                                                                                  |
-| `%i`              | `CPRINTF_INVERT`           | Inverts the background and text color.   | -                                                                                  |
-| `%u`              | `CPRINTF_UNDERSCORE`       | Adds an underline.                       | If you use the macro on Windows and no other __color__ specifiers are provided (e.g: only `CPRINTF_UNDERSCORE`), no visible text will appear. To circumvent this, use `CPRINTF_UNDERSCORE_ONLY`. |
-| -                 | `CPRINTF_UNDERSCORE_ONLY`  | Adds an underline.                       | This is the alias for `CPRINTF_UNDERSCORE` in non-Windows systems.                 |
-| *see extra notes* | `CPRINTF_FG_BOLD` or `CPRINTF_BG_BOLD` | Changes the text into a bolder version.  | You can make a text bold or background color brighter by capitalizing the format specifier. Example: `%FR`, `%BB` | -                                                                                  |
+| Format name       | Description                              |
+|-------------------|------------------------------------------|
+| `%fk`             | Changes the text color to black.         |
+| `%fr`             | Changes the text color to red.           |
+| `%fg`             | Changes the text color to green.         |
+| `%fy`             | Changes the text color to yellow.        |
+| `%fb`             | Changes the text color to blue.          |
+| `%fm`             | Changes the text color to magenta.       |
+| `%fc`             | Changes the text color to cyan.          |
+| `%fw`             | Changes the text color to white.         |
+| `%bk`             | Changes the background color to black.   |
+| `%br`             | Changes the background color to red.     |
+| `%bg`             | Changes the background color to green.   |
+| `%by`             | Changes the background color to yellow.  |
+| `%bb`             | Changes the background color to blue.    |
+| `%bm`             | Changes the background color to magenta. |
+| `%bc`             | Changes the background color to cyan.    |
+| `%bw`             | Changes the background color to white.   |
+| `%i`              | Inverts the background and text color.   |
+| `%u`              | Adds an underline.                       |
+| -                 | Adds an underline.                       |
+
+## Bold
+
+You can make a text bold or background color brighter by capitalizing the format specifier. Example: `%FR`, `%BB`
 
 # Combining formats
 You can combine multiple formats too, with `%{...}`. Example:

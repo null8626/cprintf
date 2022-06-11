@@ -2,35 +2,18 @@
 
 #ifdef _WIN32
 #include <windows.h>
-CPRINTF_EXPORT HANDLE _cprintf_handle = NULL;
-CPRINTF_EXPORT WORD _cprintf_def_attr = 0;
-CPRINTF_EXPORT WORD _cprintf_inverse_def_attr;
+static HANDLE _cprintf_handle = NULL;
+static WORD _cprintf_def_attr;
+static WORD _cprintf_inverse_def_attr;
 #else
 #include <string.h>
+static FILE * _cprintf_handle = NULL;
 #endif
 
 #include <ctype.h>
 #include <stdio.h>
 
 #ifdef _WIN32
-
-#define CPRINTF_INIT_CONTENTS()                                                                                        \
-    if (_cprintf_handle != NULL)                                                                                       \
-        return 1;                                                                                                      \
-                                                                                                                       \
-    if ((_cprintf_handle = GetStdHandle(-11)) == NULL)                                                                 \
-        return 0;                                                                                                      \
-                                                                                                                       \
-    else if (_cprintf_def_attr != 0)                                                                                   \
-        return 1;                                                                                                      \
-                                                                                                                       \
-    CONSOLE_SCREEN_BUFFER_INFO info;                                                                                   \
-    if (GetConsoleScreenBufferInfo(_cprintf_handle, &info) == 0)                                                       \
-        return 0;                                                                                                      \
-                                                                                                                       \
-    _cprintf_def_attr = info.wAttributes;                                                                              \
-    _cprintf_inverse_def_attr = _cprintf_get_inverse();                                                                \
-    return 1
 
 static WORD possible_colors[] = {FOREGROUND_RED, FOREGROUND_GREEN, FOREGROUND_BLUE,
                                  BACKGROUND_RED, BACKGROUND_GREEN, BACKGROUND_BLUE};
@@ -60,13 +43,6 @@ static WORD _cprintf_get_inverse(void)
 
     return res;
 }
-
-#if defined(_WIN32) && !defined(CPRINTF_DLL)
-CPRINTF_EXPORT unsigned char _cprintf_init(void)
-{
-    CPRINTF_INIT_CONTENTS();
-}
-#endif
 
 typedef struct
 {
@@ -109,6 +85,24 @@ typedef struct
 typedef ansi_context_t context_t;
 
 #endif
+
+CPRINTF_EXPORT bool cprintf_use(const cprintf_fd_t type) {
+#ifdef _WIN32
+    if ((_cprintf_handle = GetStdHandle(type)) == NULL)
+        return false;
+    
+    CONSOLE_SCREEN_BUFFER_INFO info;
+    if (GetConsoleScreenBufferInfo(_cprintf_handle, &info) == 0)
+        return false;
+    
+    _cprintf_def_attr = info.wAttributes;
+    _cprintf_inverse_def_attr = _cprintf_get_inverse();
+#else
+    _cprintf_handle = type;
+#endif
+
+    return true;
+}
 
 static void cprintf_ansi_parse(const char *str, ansi_context_t *out)
 {
@@ -208,6 +202,12 @@ static void cprintf_parse(const char *str, context_t *out)
 #define STATUS_ESCAPE 1
 #define STATUS_FMT 2
 
+#ifdef _WIN32
+#define CPRINTF_PUTCHAR(character) WriteConsoleA(_cprintf_handle, &character, 1, NULL, NULL)
+#else
+#define CPRINTF_PUTCHAR(character) fputc(character, _cprintf_handle)
+#endif
+
 CPRINTF_EXPORT size_t cprintf_ansi(char *str, const size_t size, const char *fmt, ...)
 {
     ansi_context_t ctx;
@@ -232,7 +232,8 @@ CPRINTF_EXPORT size_t cprintf_ansi(char *str, const size_t size, const char *fmt
             }
             else
             {
-                putchar('\\');
+                str[copied] = '\\';
+                copied++;
                 status = STATUS_NULL;
             }
             continue;
@@ -270,7 +271,7 @@ CPRINTF_EXPORT size_t cprintf_ansi(char *str, const size_t size, const char *fmt
                 i += ctx.input_size;
                 if (fmt[i] != ',')
                 {
-                    return 0;
+                    break;
                 }
                 i++;
             }
@@ -307,8 +308,11 @@ CPRINTF_EXPORT size_t cprintf_ansi(char *str, const size_t size, const char *fmt
 CPRINTF_EXPORT void cprintf(const char *fmt, ...)
 {
 #if defined(_WIN32) && !defined(CPRINTF_DLL)
-    if (_cprintf_init() == 0)
+    if (_cprintf_handle == NULL && cprintf_use(CPRINTF_STDOUT) == 0)
         return;
+#elif !defined(_WIN32)
+    if (_cprintf_handle == NULL)
+        _cprintf_handle = stdout;
 #endif
 
     context_t ctx;
@@ -331,7 +335,7 @@ CPRINTF_EXPORT void cprintf(const char *fmt, ...)
             }
             else
             {
-                putchar('\\');
+                CPRINTF_PUTCHAR('\\');
                 status = STATUS_NULL;
             }
             continue;
@@ -340,7 +344,7 @@ CPRINTF_EXPORT void cprintf(const char *fmt, ...)
         {
             if (status == STATUS_ESCAPE)
             {
-                putchar('%');
+                CPRINTF_PUTCHAR('%');
                 status = STATUS_NULL;
             }
             else
@@ -351,7 +355,7 @@ CPRINTF_EXPORT void cprintf(const char *fmt, ...)
         }
         else if (status == STATUS_NULL)
         {
-            putchar(c);
+            CPRINTF_PUTCHAR(c);
             continue;
         }
 
@@ -366,7 +370,7 @@ CPRINTF_EXPORT void cprintf(const char *fmt, ...)
 
                 if (fmt[i] != ',')
                 {
-                    return;
+                    break;
                 }
                 i++;
             }
@@ -378,10 +382,10 @@ CPRINTF_EXPORT void cprintf(const char *fmt, ...)
                 ctx.attr |= _cprintf_def_attr;
             }
             SetConsoleTextAttribute(_cprintf_handle, ctx.attr);
-            printf("%s", va_arg(vl, char *));
+            fprintf(_cprintf_handle, "%s", va_arg(vl, char *));
             SetConsoleTextAttribute(_cprintf_handle, _cprintf_def_attr);
 #else
-            printf("%s%s\x1b[0m", ctx.ansi, va_arg(vl, char *));
+            fprintf(_cprintf_handle, "%s%s\x1b[0m", ctx.ansi, va_arg(vl, char *));
 #endif
         }
         else
@@ -395,10 +399,10 @@ CPRINTF_EXPORT void cprintf(const char *fmt, ...)
                 ctx.attr |= _cprintf_def_attr;
             }
             SetConsoleTextAttribute(_cprintf_handle, ctx.attr);
-            printf("%s", va_arg(vl, char *));
+            fprintf(_cprintf_handle, "%s", va_arg(vl, char *));
             SetConsoleTextAttribute(_cprintf_handle, _cprintf_def_attr);
 #else
-            printf("%s%s\x1b[0m", ctx.ansi, va_arg(vl, char *));
+            fprintf(_cprintf_handle, "%s%s\x1b[0m", ctx.ansi, va_arg(vl, char *));
 #endif
 
             i += ctx.input_size;
@@ -415,7 +419,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD dwReason, LPVOID lpReserved)
 {
     if (dwReason == DLL_PROCESS_ATTACH)
     {
-        CPRINTF_INIT_CONTENTS();
+        return (BOOL)cprintf_use(CPRINTF_STDOUT);
     }
 
     return TRUE;
