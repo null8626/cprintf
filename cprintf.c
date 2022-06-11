@@ -25,7 +25,8 @@ WORD _cprintf_inverse_def_attr;
         return 1;                                                                                                      \
                                                                                                                        \
     CONSOLE_SCREEN_BUFFER_INFO info;                                                                                   \
-    if (GetConsoleScreenBufferInfo(_cprintf_handle, &info) == 0) return 0;                                           \
+    if (GetConsoleScreenBufferInfo(_cprintf_handle, &info) == 0)                                                       \
+        return 0;                                                                                                      \
                                                                                                                        \
     _cprintf_def_attr = info.wAttributes;                                                                              \
     _cprintf_inverse_def_attr = _cprintf_get_inverse();                                                                \
