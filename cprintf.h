@@ -23,7 +23,7 @@ extern "C"
 #define cprintf_scope
 #else
 CPRINTF_EXPORT unsigned char _cprintf_init(void);
-#define cprintf_scope if (_cprintf_handle != NULL || cprintf_init())
+#define cprintf_scope if (_cprintf_handle != NULL || _cprintf_init())
 #endif
 
 #ifdef _WIN32
