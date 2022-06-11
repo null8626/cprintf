@@ -306,7 +306,7 @@ CPRINTF_EXPORT size_t cprintf_ansi(char *str, const size_t size, const char *fmt
 
 CPRINTF_EXPORT void cprintf(const char *fmt, ...)
 {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(CPRINTF_DLL)
     if (_cprintf_init() == 0)
         return;
 #endif
